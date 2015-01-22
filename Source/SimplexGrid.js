@@ -1,6 +1,5 @@
 ﻿
 SimplexGrid = function (options) {
-    "use strict";
     this.gridOptions = options;
     this.columnNames = new Array();
     this.columnDictionary = new Array(); // columnName - column object key-value list.
@@ -80,19 +79,6 @@ SimplexGrid = function (options) {
         buttonBarTable += "</tr></table>";
     }
     controlPanel += buttonBarTable + "</td>"; //end paging buttons
-
-    controlPanel += "<td>"; // begin options
-
-    this.optionsBarTableId = this.tableId + "_options_bar";
-    this.optionChkSHowFilterId = this.optionsBarTableId + "_chk_show_filter";
-    var optionsTable = "<table id='" + this.optionsBarTableId + "' class='slx_grid_opt_bar'>";
-    optionsTable += "<tr>";
-    if (this.gridOptions.enableFilter === true) {
-        optionsTable += "<td>Show Filter <input type='checkbox' id='" + this.optionChkSHowFilterId + "' checked='checked'/></td>";
-    }
-    optionsTable += "</tr>";
-    optionsTable += "</table>";
-    controlPanel += optionsTable + "</td>"; // End options
     controlPanel += "</tr></table>"; // End of control panel markup
     combinedHtml += controlPanel;
 
@@ -205,7 +191,6 @@ SimplexGrid.prototype.doubleClick = function (rowObject) {
 };
 
 SimplexGrid.prototype.createGrid = function (data) {
-    "use strict";
     // Create the grid and wire up event handlers.
 
     // Don't show it in the UI yet.
@@ -244,12 +229,6 @@ SimplexGrid.prototype.createGrid = function (data) {
             self.clearFilters();
             self.onDataNeededHandler("filter", self);
             return false;
-        };
-        document.getElementById(this.optionChkSHowFilterId).onclick = function () {
-            var visible;
-            if (this.checked) visible = "";
-            else visible = "hidden";
-            document.getElementById(self.filterTableId).style.visibility = visible;
         };
     }
     // Bind editor buttons.
@@ -299,8 +278,6 @@ SimplexGrid.prototype.loadData = function (dataSet) {
 
 // Only to be called from paging.
 SimplexGrid.prototype.loadPageData = function (mayBeFilteredDataSet) {
-    "use strict";
-
     var dataPage;
     if (this.gridOptions.enablePaging === true && this.gridOptions.autoPaging === true) {
 
@@ -370,19 +347,16 @@ SimplexGrid.prototype.getFilteredData = function (dataSet, filters) {
 };
 
 SimplexGrid.prototype.showGrid = function () {
-    "use strict";
     // For some reason, both the below settings are necessary for the div to be visible (which is invisible by default)
     document.getElementById(this.gridOptions.containerId).style.display = "block";
     document.getElementById(this.gridOptions.containerId).style.visibility = "visible";
 };
 
 SimplexGrid.prototype.hideGrid = function () {
-    "use strict";
     document.getElementById(this.gridOptions.containerId).style.display = "none";
 };
 
 SimplexGrid.prototype.destroy = function () {
-    "use strict";
     document.getElementById(this.gridOptions.containerId).innerHTML = null;
 };
 
