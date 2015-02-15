@@ -1,5 +1,5 @@
 ﻿
-SimplexGrid = function (options) {
+var SimplexGrid = function (options) {
     this.gridOptions = options;
     this.columnNames = new Array();
     this.columnDictionary = new Array(); // columnName - column object key-value list.
@@ -15,6 +15,7 @@ SimplexGrid = function (options) {
     this.editorTableAddId = "";
     this.editorTableEditId = "";
     this.editorTableDeleteId = "";
+    this.controlPanelContainerId = this.gridOptions.gridName + "_controlPanelContainer";
     this.currentPageNo = 0;
     this.totalRecordCount = isNaN(options.totalRecordCount) ? 0 : options.totalRecordCount;
     this.gridOptions.pageSize = isNaN(options.pageSize) || (options.pageSize <= 0) ? 1 : options.pageSize; // Default to 1
@@ -45,8 +46,8 @@ SimplexGrid = function (options) {
     bodyTableContainer += "</div>";
 
     var combinedHtml = headerTable + bodyTableContainer;
-
-    var controlPanel = "<table class='slx_grid_ctrl_panel'><tr><td style='width:1%;white-space:nowrap;'>";
+    
+    var controlPanel = "<div id=" + this.controlPanelContainerId + "><table class='slx_grid_ctrl_panel'><tr><td style='width:1%;white-space:nowrap;'>";
     if (this.gridOptions.enableAdd === true || this.gridOptions.enableEdit === true || this.gridOptions.enableDelete === true) {
         var editorTableId = this.tableId + "_editor_table";
         this.editorTableAddId = editorTableId + "_add";
@@ -79,7 +80,8 @@ SimplexGrid = function (options) {
         buttonBarTable += "</tr></table>";
     }
     controlPanel += buttonBarTable + "</td>"; //end paging buttons
-    controlPanel += "</tr></table>"; // End of control panel markup
+    controlPanel += "</tr></table>"; 
+    controlPanel += "</div>"; // End of control panel markup
     combinedHtml += controlPanel;
 
     if (this.gridOptions.enableFilter === true) {
@@ -103,6 +105,11 @@ SimplexGrid = function (options) {
     var tempDiv = document.createElement("div");
     tempDiv.innerHTML = combinedHtml;
     this.container = tempDiv;
+
+    // 'initEditor' is defined in the editor plugin.
+    if (this.initEditor != undefined) {
+        this.initEditor();
+    }
 };
 
 SimplexGrid.prototype.onDataNeededHandler = function (mode, gridRef) {
@@ -234,9 +241,12 @@ SimplexGrid.prototype.createGrid = function (data) {
     // Bind editor buttons.
     if (this.gridOptions.enableAdd === true || this.gridOptions.enableEdit === true || this.gridOptions.enableDelete === true) {
         if (this.gridOptions.enableAdd === true) {
-            document.getElementById(this.editorTableAddId).onclick = function () {
-                if (typeof self.gridOptions.onAdd == "function") {
-                    self.gridOptions.onAdd(self);
+            if (typeof self.showAddEditor == "function" || typeof self.showEditEditor == "function") {
+                self.initEditor();
+            }
+            document.getElementById(this.editorTableAddId).onclick = function() {
+                if (typeof self.showAddEditor == "function") {
+                    self.showAddEditor(self);
                 }
                 return false;
             };
